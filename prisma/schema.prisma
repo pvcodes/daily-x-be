@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Bin {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  isMarkdown Boolean  @default(false)
+  content    String
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  uid        String   @unique
+  User       User     @relation(fields: [userId], references: [id])
+}
+
+model Budget {
+  id        Int       @id @default(autoincrement())
+  day       DateTime  @default(now())
+  amount    Float
+  userId    Int
+  remaining Float
+  User      User      @relation(fields: [userId], references: [id])
+  Expense   Expense[]
+
+  @@unique([day, userId])
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  description String
+  date        DateTime @default(now())
+  userId      Int
+  budgetId    Int
+  Budget      Budget   @relation(fields: [budgetId], references: [id])
+  User        User     @relation(fields: [userId], references: [id])
+}
+
+model MonthlyExpense {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  description String
+  date        DateTime @default(now())
+  userId      Int
+  mid         String
+  User        User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  password       String?
+  name           String?
+  img_url        String?
+  auth_type      AuthType?         @default(basic)
+  Bin            Bin[]
+  Budget         Budget[]
+  Expense        Expense[]
+  MonthlyExpense MonthlyExpense[]
+}
+
+enum AuthType {
+  g_oauth
+  basic
+}
