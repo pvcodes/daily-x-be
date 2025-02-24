@@ -1,3 +1,4 @@
 import userRouter from './userRouter';
+import expenseRouter from './expenseRouter';
 
-export { userRouter };
+export { userRouter, expenseRouter };

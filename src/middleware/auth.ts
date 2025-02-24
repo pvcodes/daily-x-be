@@ -25,10 +25,12 @@ export const getToken = async (req: Request, res: Response) => {
         id: true,
         email: true,
         auth_type: true,
+        img_url: true,
+        name: true,
       });
 
       const auth_token = generateToken(userFromDb);
-      res.json({ auth_token });
+      res.json({ auth_token, ...userFromDb });
       return;
     } else if (type === 'basic') {
       const { email, password } = req.body;
@@ -58,6 +60,7 @@ export const getToken = async (req: Request, res: Response) => {
         name: userFromDb.name,
         email: userFromDb.email,
         img_url: userFromDb.img_url,
+        auth_type: userFromDb.auth_type,
       });
       return;
     } else {
